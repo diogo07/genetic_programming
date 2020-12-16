@@ -11,8 +11,6 @@ from deap import creator
 from deap import tools
 from deap import gp
 
-
-# Define new functions
 def protectedDiv(left, right):
     try:
         return left / right
@@ -25,10 +23,7 @@ pset.addPrimitive(operator.add, 2)
 pset.addPrimitive(operator.sub, 2)
 pset.addPrimitive(operator.mul, 2)
 pset.addPrimitive(protectedDiv, 2)
-pset.addPrimitive(operator.neg, 1)
-pset.addPrimitive(math.cos, 1)
-pset.addPrimitive(math.sin, 1)
-pset.addEphemeralConstant("rand101", lambda: random.uniform(-10.0, 10.0))
+pset.addEphemeralConstant("rand101", lambda: random.uniform(-1.0, 1.0))
 pset.renameArguments(ARG0='x')
 
 creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
@@ -47,7 +42,7 @@ def evalSymbReg(individual, points):
     return math.fsum(sqerrors) / len(points),
 
 
-toolbox.register("evaluate", evalSymbReg, points=[x / 10. for x in range(-10, 10)])
+toolbox.register("evaluate", evalSymbReg, points=[x / 10. for x in range(-5, 5)])
 toolbox.register("select", tools.selTournament, tournsize=3)
 toolbox.register("mate", gp.cxOnePoint)
 toolbox.register("expr_mut", gp.genFull, min_=0, max_=2)
@@ -69,7 +64,7 @@ def main():
     mstats.register("min", numpy.min)
     mstats.register("max", numpy.max)
 
-    pop, log = algorithms.eaSimple(pop, toolbox, 0.5, 0.1, 200, stats=mstats,
+    pop, log = algorithms.eaSimple(pop, toolbox, 0.8, 0.2, 100, stats=mstats,
                                    halloffame=hof, verbose=True)
 
     return pop, log, hof
@@ -98,7 +93,6 @@ if __name__ == "__main__":
 
     print(expr)
 
-    #PLOTANDO OS GRAFICOS
     tree = gp.PrimitiveTree(expr)
 
     candidate_function = toolbox.compile(tree)
